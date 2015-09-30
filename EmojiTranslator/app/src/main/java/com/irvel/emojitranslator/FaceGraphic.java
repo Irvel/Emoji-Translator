@@ -13,12 +13,12 @@ import com.irvel.emojitranslator.views.GraphicOverlay;
  */
 
 /**
- * Graphic instance for rendering face position, orientation, and landmarks within an associated
- * graphic overlay view.
+ * Graphic instance for rendering landmarks and position of a detected face.
+ * Includes fragments from the Android Vision API Samples: https://github.com/googlesamples/android-vision
  */
 
 public class FaceGraphic extends GraphicOverlay.Graphic {
-    
+
     private static final float BOX_STROKE_WIDTH = 4.0f;
     private final int drawColor = Color.WHITE;
 

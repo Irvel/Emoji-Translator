@@ -1,7 +1,6 @@
 package com.irvel.emojitranslator.views;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -16,6 +15,17 @@ import java.io.IOException;
 /**
  * Created by irvel on 29/09/2015.
  */
+
+//==============================================================================================
+// Camera Preview
+//==============================================================================================
+
+/**
+ * Custom view for the camera viewfinder
+ * Includes fragments from the Android Vision API Samples: https://github.com/googlesamples/android-vision
+ */
+
+
 public class CameraPreview extends ViewGroup{
     private static final String TAG = "CameraPreview";
     private static final int PREVIEW_WIDTH = 480;
