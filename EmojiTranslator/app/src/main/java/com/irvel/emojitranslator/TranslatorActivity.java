@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -35,7 +36,8 @@ public class TranslatorActivity extends AppCompatActivity {
 
     private CameraSource mCameraSource = null;
     private GraphicOverlay mGraphicOverlay;
-
+    private Emoji mEmoji;
+    private TextView mEmojiDisplay;
     private CameraPreview mPreview;
 
     private static final int RC_HANDLE_GMS = 9001;
@@ -118,7 +120,6 @@ public class TranslatorActivity extends AppCompatActivity {
                 new LargestFaceFocusingProcessor(
                         detector,
                         new GraphicFaceTracker(mGraphicOverlay)));
-
 
         if (!detector.isOperational()) {
             // Note: The first time that an app using face API is installed on a device, GMS will
@@ -262,11 +263,14 @@ public class TranslatorActivity extends AppCompatActivity {
     private class GraphicFaceTracker extends Tracker<Face> {
         private GraphicOverlay mOverlay;
         private FaceGraphic mFaceGraphic;
+        private Emoji mEmoji;
+        private TextView mEmojiDisplay;
 
         GraphicFaceTracker(GraphicOverlay overlay) {
             mOverlay = overlay;
             mFaceGraphic = new FaceGraphic(overlay);
-
+            mEmojiDisplay = (TextView) findViewById(R.id.emojiDisplay);
+            mEmoji = new Emoji();
         }
 
         /**
@@ -284,6 +288,13 @@ public class TranslatorActivity extends AppCompatActivity {
         public void onUpdate(FaceDetector.Detections<Face> detectionResults, Face face) {
             mOverlay.add(mFaceGraphic);
             mFaceGraphic.updateFace(face);
+            mEmoji.setExpression(face);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mEmojiDisplay.setText(mEmoji.getEmojiChar());
+                }
+            });
         }
 
         /**
@@ -329,3 +340,4 @@ public class TranslatorActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 }
+

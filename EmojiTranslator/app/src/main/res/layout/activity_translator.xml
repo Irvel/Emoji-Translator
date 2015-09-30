@@ -24,6 +24,14 @@
 
     </com.irvel.emojitranslator.views.CameraPreview>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/emojiDisplay"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50dp" />
 
 
 </LinearLayout>
