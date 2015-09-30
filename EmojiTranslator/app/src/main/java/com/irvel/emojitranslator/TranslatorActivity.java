@@ -9,24 +9,23 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Rect;
+import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.TouchDelegate;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.vision.CameraSource;
-import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
@@ -46,15 +45,15 @@ public class TranslatorActivity extends AppCompatActivity {
     private boolean mCameraPaused = false;
     private Emoji mEmoji;
     private static final int RC_HANDLE_GMS = 9001;
-    // permission request codes need to be < 256
     private static final int RC_HANDLE_CAMERA_PERM = 2;
 
     //==============================================================================================
-    // Activity Methods
+    // Translator Activity
     //==============================================================================================
 
     /**
-     * Initializes the UI and initiates the creation of a face detector.
+     * Initializes the UI, creates the face detector and provides the callback for the interface
+     * buttons
      */
 
     @Override
@@ -66,10 +65,11 @@ public class TranslatorActivity extends AppCompatActivity {
         CardView previewCard = (CardView) findViewById(R.id.preview_card_view);
         CardView emojiCard = (CardView) findViewById(R.id.emoji_card_view);
         ImageButton copyButton = (ImageButton) findViewById(R.id.copy_button);
-        ImageButton pauseButton = (ImageButton) findViewById(R.id.pause_button);
+        final ImageButton pauseButton = (ImageButton) findViewById(R.id.pause_button);
         previewCard.setCardElevation(20f);
         emojiCard.setCardElevation(20f);
         mEmoji = new Emoji();
+
         copyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,10 +92,12 @@ public class TranslatorActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!mCameraPaused) {
+                    pauseButton.setImageResource(R.drawable.ic_play_arrow_white_24dp);
                     mPreview.stop();
                     mCameraPaused = true;
                 }
                 else{
+                    pauseButton.setImageResource(R.drawable.ic_pause_black_24dp);
                     startCameraSource();
                     mCameraPaused = false;
                 }
@@ -109,6 +111,22 @@ public class TranslatorActivity extends AppCompatActivity {
         } else {
             requestCameraPermission();
         }
+    }
+
+    //Increases the touch area of the buttons
+    public static void expandTouchArea(final View bigView, final View smallView, final int extraPadding) {
+        bigView.post(new Runnable() {
+            @Override
+            public void run() {
+                Rect rect = new Rect();
+                smallView.getHitRect(rect);
+                rect.top -= extraPadding;
+                rect.left -= extraPadding;
+                rect.right += extraPadding;
+                rect.bottom += extraPadding;
+                bigView.setTouchDelegate(new TouchDelegate(rect, smallView));
+            }
+        });
     }
 
     /**
