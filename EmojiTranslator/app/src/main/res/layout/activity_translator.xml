@@ -10,13 +10,13 @@
     android:layout_height="match_parent"
     tools:context=".TranslatorActivity"
     android:weightSum="1"
-    android:padding="0dp">
+    android:padding="0dp"
+    android:background="@color/primary_dark">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/app_bar"
-        android:capitalize="characters">
+        android:id="@+id/app_bar">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -25,7 +25,20 @@
             android:background="@color/primary"
             android:minHeight="?attr/actionBarSize"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            tools:ignore="UnusedAttribute" />
+            tools:ignore="UnusedAttribute"
+            android:fontFamily="sans-serif-light"
+            android:layout_gravity="center">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/app_name"
+                android:gravity = "center"
+                android:id="@+id/toolbar_title"
+                android:textSize="19dp"
+                android:textColor="@color/primary_text" />
+
+        </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
@@ -40,13 +53,13 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="26dp"
         android:layout_marginLeft="72dp"
-        android:layout_marginRight="72dp"
-        android:background="@color/primary_light">
+        android:layout_marginRight="72dp">
 
         <RelativeLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/primary_light">
 
             <TextView
                 android:layout_width="wrap_content"
