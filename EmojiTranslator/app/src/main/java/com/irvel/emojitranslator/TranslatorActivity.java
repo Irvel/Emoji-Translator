@@ -65,10 +65,8 @@ public class TranslatorActivity extends AppCompatActivity {
         mGraphicOverlay = (GraphicOverlay) findViewById(R.id.faceOverlay);
         CardView previewCard = (CardView) findViewById(R.id.preview_card_view);
         CardView emojiCard = (CardView) findViewById(R.id.emoji_card_view);
-        Toolbar mainToolbar = (Toolbar) findViewById(R.id.toolbar);
         ImageButton copyButton = (ImageButton) findViewById(R.id.copy_button);
         ImageButton pauseButton = (ImageButton) findViewById(R.id.pause_button);
-        mainToolbar.setTitle(R.string.app_name);
         previewCard.setCardElevation(20f);
         emojiCard.setCardElevation(20f);
         mEmoji = new Emoji();

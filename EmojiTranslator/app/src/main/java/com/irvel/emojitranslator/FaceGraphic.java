@@ -18,23 +18,9 @@ import com.irvel.emojitranslator.views.GraphicOverlay;
  */
 
 public class FaceGraphic extends GraphicOverlay.Graphic {
-
-    private static final float FACE_POSITION_RADIUS = 10.0f;
-    private static final float ID_TEXT_SIZE = 40.0f;
-    private static final float ID_Y_OFFSET = 50.0f;
-    private static final float ID_X_OFFSET = -50.0f;
-    private static final float BOX_STROKE_WIDTH = 5.0f;
-
-    private static final int COLOR_CHOICES[] = {
-            Color.BLUE,
-            Color.CYAN,
-            Color.GREEN,
-            Color.MAGENTA,
-            Color.RED,
-            Color.WHITE,
-            Color.YELLOW
-    };
-    private static int mCurrentColorIndex = 0;
+    
+    private static final float BOX_STROKE_WIDTH = 4.0f;
+    private final int drawColor = Color.WHITE;
 
     private Paint mFacePositionPaint;
     private Paint mIdPaint;
@@ -42,23 +28,18 @@ public class FaceGraphic extends GraphicOverlay.Graphic {
 
     private volatile Face mFace;
     private int mFaceId;
-    private float mFaceHappiness;
 
     FaceGraphic(GraphicOverlay overlay) {
         super(overlay);
 
-        mCurrentColorIndex = (mCurrentColorIndex + 1) % COLOR_CHOICES.length;
-        final int selectedColor = COLOR_CHOICES[mCurrentColorIndex];
-
         mFacePositionPaint = new Paint();
-        mFacePositionPaint.setColor(selectedColor);
+        mFacePositionPaint.setColor(drawColor);
 
         mIdPaint = new Paint();
-        mIdPaint.setColor(selectedColor);
-        mIdPaint.setTextSize(ID_TEXT_SIZE);
+        mIdPaint.setColor(drawColor);
 
         mBoxPaint = new Paint();
-        mBoxPaint.setColor(selectedColor);
+        mBoxPaint.setColor(drawColor);
         mBoxPaint.setStyle(Paint.Style.STROKE);
         mBoxPaint.setStrokeWidth(BOX_STROKE_WIDTH);
     }
@@ -87,18 +68,8 @@ public class FaceGraphic extends GraphicOverlay.Graphic {
             return;
         }
 
-        //Draws the corresponding emoji
-
-
-        // Draws a circle at the position of the detected face, with the face's track id below.
         float x = translateX(face.getPosition().x + face.getWidth() / 2);
         float y = translateY(face.getPosition().y + face.getHeight() / 2);
-        canvas.drawCircle(x, y, FACE_POSITION_RADIUS, mFacePositionPaint);
-        canvas.drawText("id: " + mFaceId, x + ID_X_OFFSET, y + ID_Y_OFFSET, mIdPaint);
-        canvas.drawText("happiness: " + String.format("%.2f", face.getIsSmilingProbability()), x - ID_X_OFFSET, y - ID_Y_OFFSET, mIdPaint);
-        canvas.drawText("right eye: " + String.format("%.2f", face.getIsRightEyeOpenProbability()), x + ID_X_OFFSET * 2, y + ID_Y_OFFSET * 2, mIdPaint);
-        canvas.drawText("left eye: " + String.format("%.2f", face.getIsLeftEyeOpenProbability()), x - ID_X_OFFSET*2, y - ID_Y_OFFSET*2, mIdPaint);
-
 
         // Draws a bounding box around the face.
         float xOffset = scaleX(face.getWidth() / 2.0f);
@@ -110,28 +81,16 @@ public class FaceGraphic extends GraphicOverlay.Graphic {
         canvas.drawRect(left, top, right, bottom, mBoxPaint);
 
         Paint paint = new Paint();
-        paint.setColor(Color.GREEN);
+        paint.setColor(drawColor);
         paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(5);
+        paint.setStrokeWidth(BOX_STROKE_WIDTH);
 
+        //Draws the detected landmarks on the face
         for (Landmark landmark : mFace.getLandmarks()) {
-            int cx = (int) (landmark.getPosition().x + xOffset);
-            int cy = (int) (landmark.getPosition().y + yOffset);
+            int cx = (int) translateX((landmark.getPosition().x));
+            int cy = (int) translateY((landmark.getPosition().y));
             canvas.drawCircle(cx, cy, 10, paint);
         }
     }
 
-    private void drawFaceAnnotations(Canvas canvas, double scale) {
-        Paint paint = new Paint();
-        paint.setColor(Color.GREEN);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(5);
-        Face face = mFace;
-
-        for (Landmark landmark : face.getLandmarks()) {
-            int cx = (int) (landmark.getPosition().x * 1.5);
-            int cy = (int) (landmark.getPosition().y * 1.5);
-            canvas.drawCircle(cx, cy, 10, paint);
-        }
-    }
 }
