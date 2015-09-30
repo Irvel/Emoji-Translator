@@ -270,6 +270,7 @@ public class TranslatorActivity extends AppCompatActivity {
             mOverlay = overlay;
             mFaceGraphic = new FaceGraphic(overlay);
             mEmojiDisplay = (TextView) findViewById(R.id.emojiDisplay);
+
             mEmoji = new Emoji();
         }
 
