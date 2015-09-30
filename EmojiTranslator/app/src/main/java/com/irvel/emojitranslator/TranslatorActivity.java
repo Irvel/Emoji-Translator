@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -11,11 +13,15 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
+
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -36,10 +42,9 @@ public class TranslatorActivity extends AppCompatActivity {
 
     private CameraSource mCameraSource = null;
     private GraphicOverlay mGraphicOverlay;
-    private Emoji mEmoji;
-    private TextView mEmojiDisplay;
     private CameraPreview mPreview;
-
+    private boolean mCameraPaused = false;
+    private Emoji mEmoji;
     private static final int RC_HANDLE_GMS = 9001;
     // permission request codes need to be < 256
     private static final int RC_HANDLE_CAMERA_PERM = 2;
@@ -56,10 +61,48 @@ public class TranslatorActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_translator);
-
         mPreview = (CameraPreview) findViewById(R.id.preview);
         mGraphicOverlay = (GraphicOverlay) findViewById(R.id.faceOverlay);
+        CardView previewCard = (CardView) findViewById(R.id.preview_card_view);
+        CardView emojiCard = (CardView) findViewById(R.id.emoji_card_view);
+        Toolbar mainToolbar = (Toolbar) findViewById(R.id.toolbar);
+        ImageButton copyButton = (ImageButton) findViewById(R.id.copy_button);
+        ImageButton pauseButton = (ImageButton) findViewById(R.id.pause_button);
+        mainToolbar.setTitle(R.string.app_name);
+        previewCard.setCardElevation(20f);
+        emojiCard.setCardElevation(20f);
+        mEmoji = new Emoji();
+        copyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Copies the current emoji to the clipboard
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("Emoji", mEmoji.getEmojiChar());
+                clipboard.setPrimaryClip(clip);
+                Snackbar.make(mPreview, R.string.copy_success,
+                        Snackbar.LENGTH_INDEFINITE)
+                        .setAction(R.string.ok, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                            }
+                        })
+                        .show();
+            }
+        });
 
+        pauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!mCameraPaused) {
+                    mPreview.stop();
+                    mCameraPaused = true;
+                }
+                else{
+                    startCameraSource();
+                    mCameraPaused = false;
+                }
+            }
+        });
         // Check for the camera permission before accessing the camera.  If the
         // permission is not granted yet, request permission.
         int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
@@ -119,7 +162,7 @@ public class TranslatorActivity extends AppCompatActivity {
         detector.setProcessor(
                 new LargestFaceFocusingProcessor(
                         detector,
-                        new GraphicFaceTracker(mGraphicOverlay)));
+                        new GraphicFaceTracker(mGraphicOverlay, mEmoji)));
 
         if (!detector.isOperational()) {
             // Note: The first time that an app using face API is installed on a device, GMS will
@@ -146,8 +189,8 @@ public class TranslatorActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
         startCameraSource();
+        mCameraPaused = false;
     }
 
     /**
@@ -157,6 +200,7 @@ public class TranslatorActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         mPreview.stop();
+        mCameraPaused = true;
     }
 
     /**
@@ -266,12 +310,11 @@ public class TranslatorActivity extends AppCompatActivity {
         private Emoji mEmoji;
         private TextView mEmojiDisplay;
 
-        GraphicFaceTracker(GraphicOverlay overlay) {
+        GraphicFaceTracker(GraphicOverlay overlay, Emoji emoji) {
             mOverlay = overlay;
             mFaceGraphic = new FaceGraphic(overlay);
             mEmojiDisplay = (TextView) findViewById(R.id.emojiDisplay);
-
-            mEmoji = new Emoji();
+            mEmoji = emoji;
         }
 
         /**
