@@ -18,8 +18,8 @@ import java.io.IOException;
  */
 public class CameraPreview extends ViewGroup{
     private static final String TAG = "CameraPreview";
-    private static final int PREVIEW_WIDTH = 360;
-    private static final int PREVIEW_HEIGHT = 360;
+    private static final int PREVIEW_WIDTH = 480;
+    private static final int PREVIEW_HEIGHT = 480;
 
     private Context mContext;
     private SurfaceView mSurfaceView;
