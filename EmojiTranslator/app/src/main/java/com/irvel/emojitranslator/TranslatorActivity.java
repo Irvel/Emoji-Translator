@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
@@ -60,17 +59,12 @@ public class TranslatorActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_translator);
+        mEmoji = new Emoji();
         mPreview = (CameraPreview) findViewById(R.id.preview);
         setPreviewSize(mPreview);
         mGraphicOverlay = (GraphicOverlay) findViewById(R.id.faceOverlay);
-        CardView previewCard = (CardView) findViewById(R.id.preview_card_view);
-        CardView emojiCard = (CardView) findViewById(R.id.emoji_card_view);
         ImageButton copyButton = (ImageButton) findViewById(R.id.copy_button);
         final ImageButton pauseButton = (ImageButton) findViewById(R.id.pause_button);
-        previewCard.setCardElevation(20f);
-        emojiCard.setCardElevation(20f);
-        mEmoji = new Emoji();
-
         copyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
