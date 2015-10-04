@@ -10,12 +10,18 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -33,7 +39,7 @@ import com.irvel.emojitranslator.views.GraphicOverlay;
 
 import java.io.IOException;
 
-public class TranslatorActivity extends AppCompatActivity {
+public class TranslatorActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private static final String TAG = "TranslatorActivity";
 
@@ -61,11 +67,13 @@ public class TranslatorActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_translator);
+        setContentView(R.layout.drawer_wrapper);
         mPreview = (CameraPreview) findViewById(R.id.preview);
         mGraphicOverlay = (GraphicOverlay) findViewById(R.id.faceOverlay);
         mPauseButton = (ImageButton) findViewById(R.id.pause_button);
         mEmoji = new Emoji();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         ImageButton copyButton = (ImageButton) findViewById(R.id.copy_button);
         final ImageButton cameraButton = (ImageButton) findViewById(R.id.switch_camera_button);
         setPreviewSize(mPreview);
@@ -115,6 +123,15 @@ public class TranslatorActivity extends AppCompatActivity {
                 }
             }
         });
+        //Inflates the action drawer
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
         // Check for the camera permission before accessing the camera.  If the
         // permission is not granted yet, request permission.
         int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
@@ -339,6 +356,29 @@ public class TranslatorActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_single) {
+            // Handle the camera action
+        } else if (id == R.id.nav_multi) {
+
+        } else if (id == R.id.nav_history) {
+
+        } else if (id == R.id.nav_about) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
 
 
 
@@ -411,7 +451,10 @@ public class TranslatorActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_translator, menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_translator, menu);;
+        //menu.setGroupVisible(R.id.main_menu_group, false);
+
         return true;
     }
 

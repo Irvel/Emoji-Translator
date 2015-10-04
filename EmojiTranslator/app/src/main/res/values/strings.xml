@@ -9,4 +9,8 @@
     <string name="copy_success">Emoji copied to clipboard!</string>
     <string name="download_pending_title">Hang in there!</string>
     <string name="download_pending_message">The libraries required for the face detection are being downloaded. Don\'t worry, this will only happen once!</string>
+    <string name="title_activity_test">TestActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>

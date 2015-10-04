@@ -89,7 +89,7 @@ public class FaceGraphic extends GraphicOverlay.Graphic {
         for (Landmark landmark : mFace.getLandmarks()) {
             int cx = (int) translateX((landmark.getPosition().x));
             int cy = (int) translateY((landmark.getPosition().y));
-            canvas.drawCircle(cx, cy, 10, paint);
+            canvas.drawCircle(cx, cy, 8, paint);
         }
     }
 
