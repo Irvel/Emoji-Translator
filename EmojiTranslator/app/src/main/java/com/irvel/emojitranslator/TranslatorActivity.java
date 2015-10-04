@@ -35,12 +35,15 @@ import java.io.IOException;
 
 public class TranslatorActivity extends AppCompatActivity {
 
-    private static final String TAG = "FaceTracker";
+    private static final String TAG = "TranslatorActivity";
 
     private CameraSource mCameraSource = null;
     private GraphicOverlay mGraphicOverlay;
     private CameraPreview mPreview;
+    private ImageButton mPauseButton;
     private boolean mCameraPaused = false;
+    private int mCameraFacing = CameraSource.CAMERA_FACING_FRONT;
+
     private Emoji mEmoji;
     private static final int RC_HANDLE_GMS = 9001;
     private static final int RC_HANDLE_CAMERA_PERM = 2;
@@ -59,12 +62,13 @@ public class TranslatorActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_translator);
-        mEmoji = new Emoji();
         mPreview = (CameraPreview) findViewById(R.id.preview);
-        setPreviewSize(mPreview);
         mGraphicOverlay = (GraphicOverlay) findViewById(R.id.faceOverlay);
+        mPauseButton = (ImageButton) findViewById(R.id.pause_button);
+        mEmoji = new Emoji();
         ImageButton copyButton = (ImageButton) findViewById(R.id.copy_button);
-        final ImageButton pauseButton = (ImageButton) findViewById(R.id.pause_button);
+        final ImageButton cameraButton = (ImageButton) findViewById(R.id.switch_camera_button);
+        setPreviewSize(mPreview);
         copyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,19 +86,32 @@ public class TranslatorActivity extends AppCompatActivity {
                         .show();
             }
         });
-
-        pauseButton.setOnClickListener(new View.OnClickListener() {
+        mPauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!mCameraPaused) {
-                    pauseButton.setImageResource(R.drawable.ic_play_arrow_white_24dp);
-                    mPreview.stop();
-                    mCameraPaused = true;
+                updatePauseButton();
+            }
+        });
+        cameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mCameraFacing == CameraSource.CAMERA_FACING_FRONT) {
+                    if(mCameraPaused)
+                        updatePauseButton();
+                    mCameraSource.release();
+                    mCameraFacing = CameraSource.CAMERA_FACING_BACK;
+                    cameraButton.setImageResource(R.drawable.ic_camera_front_black_24dp);
+                    createCameraSource();
+                    startCameraSource();
                 }
                 else{
-                    pauseButton.setImageResource(R.drawable.ic_pause_black_24dp);
+                    if(mCameraPaused)
+                        updatePauseButton();
+                    mCameraSource.release();
+                    mCameraFacing = CameraSource.CAMERA_FACING_FRONT;
+                    cameraButton.setImageResource(R.drawable.ic_camera_rear_black_24dp);
+                    createCameraSource();
                     startCameraSource();
-                    mCameraPaused = false;
                 }
             }
         });
@@ -105,6 +122,19 @@ public class TranslatorActivity extends AppCompatActivity {
             createCameraSource();
         } else {
             requestCameraPermission();
+        }
+    }
+
+    private void updatePauseButton() {
+        if(!mCameraPaused) {
+            mPauseButton.setImageResource(R.drawable.ic_play_arrow_white_24dp);
+            mPreview.stop();
+            mCameraPaused = true;
+        }
+        else{
+            mPauseButton.setImageResource(R.drawable.ic_pause_black_24dp);
+            startCameraSource();
+            mCameraPaused = false;
         }
     }
 
@@ -184,11 +214,16 @@ public class TranslatorActivity extends AppCompatActivity {
             builder.show();
             Log.w(TAG, "Face detector dependencies are not yet available.");
         }
+        int previewSize;
+        if(mCameraFacing == CameraSource.CAMERA_FACING_BACK)
+            previewSize = 800;
+        else
+            previewSize = 320;
 
         mCameraSource = new CameraSource.Builder(context, detector)
-                .setRequestedPreviewSize(480, 480)
-                .setFacing(CameraSource.CAMERA_FACING_FRONT)
-                .setRequestedFps(60.0f)
+                .setRequestedPreviewSize(previewSize, previewSize)
+                .setFacing(mCameraFacing)
+                .setRequestedFps(30.0f)
                 .build();
     }
 
@@ -199,7 +234,8 @@ public class TranslatorActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         startCameraSource();
-        mCameraPaused = false;
+        if(mCameraPaused)
+            updatePauseButton();
     }
 
     /**
@@ -210,6 +246,7 @@ public class TranslatorActivity extends AppCompatActivity {
         super.onPause();
         mPreview.stop();
         mCameraPaused = true;
+        updatePauseButton();
     }
 
     /**
