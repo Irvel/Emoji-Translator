@@ -7,4 +7,6 @@
     <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
     <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
     <string name="copy_success">Emoji copied to clipboard!</string>
+    <string name="download_pending_title">Hang in there!</string>
+    <string name="download_pending_message">The libraries required for the face detection are being downloaded. Don\'t worry, this will only happen once!</string>
 </resources>
