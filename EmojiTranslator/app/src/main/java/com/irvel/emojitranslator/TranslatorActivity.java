@@ -65,8 +65,6 @@ public class TranslatorActivity extends AppCompatActivity {
         mGraphicOverlay = (GraphicOverlay) findViewById(R.id.faceOverlay);
         CardView previewCard = (CardView) findViewById(R.id.preview_card_view);
         CardView emojiCard = (CardView) findViewById(R.id.emoji_card_view);
-
-
         ImageButton copyButton = (ImageButton) findViewById(R.id.copy_button);
         final ImageButton pauseButton = (ImageButton) findViewById(R.id.pause_button);
         previewCard.setCardElevation(20f);
@@ -185,11 +183,10 @@ public class TranslatorActivity extends AppCompatActivity {
             // isOperational() can be used to check if the required native library is currently
             // available.  The detector will automatically become operational once the library
             // download completes on device.
-            new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
-            builder.setTitle("Dialog");
-            builder.setMessage("Lorem ipsum dolor ....");
-            builder.setPositiveButton("OK", null);
-            builder.setNegativeButton("Cancel", null);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.download_pending_title);
+            builder.setMessage(R.string.download_pending_message);
+            builder.setPositiveButton(R.string.ok, null);
             builder.show();
             Log.w(TAG, "Face detector dependencies are not yet available.");
         }
