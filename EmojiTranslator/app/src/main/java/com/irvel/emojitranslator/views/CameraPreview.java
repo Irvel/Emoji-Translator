@@ -28,14 +28,14 @@ import java.io.IOException;
 
 public class CameraPreview extends ViewGroup{
     private static final String TAG = "CameraPreview";
-    private static final int PREVIEW_WIDTH = 480;
-    private static final int PREVIEW_HEIGHT = 480;
 
     private Context mContext;
     private SurfaceView mSurfaceView;
     private boolean mStartRequested;
     private boolean mSurfaceAvailable;
     private CameraSource mCameraSource;
+    private int mPreviewWidth;
+    private int mPreviewHeight;
 
     private GraphicOverlay mOverlay;
 
@@ -45,10 +45,17 @@ public class CameraPreview extends ViewGroup{
         mContext = context;
         mStartRequested = false;
         mSurfaceAvailable = false;
-
         mSurfaceView = new SurfaceView(context);
         mSurfaceView.getHolder().addCallback(new SurfaceCallback());
         addView(mSurfaceView);
+    }
+
+    public void setPreviewWidth(int previewWidth) {
+        this.mPreviewWidth = previewWidth;
+    }
+
+    public void setPreviewHeight(int previewHeight) {
+        this.mPreviewHeight = previewHeight;
     }
 
     private class SurfaceCallback implements SurfaceHolder.Callback {
@@ -103,7 +110,7 @@ public class CameraPreview extends ViewGroup{
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         for (int i = 0; i < getChildCount(); ++i) {
-            getChildAt(i).layout(0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT);
+            getChildAt(i).layout(0, 0, mPreviewWidth, mPreviewHeight);
         }
 
         try {

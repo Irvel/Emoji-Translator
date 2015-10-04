@@ -9,16 +9,15 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.TouchDelegate;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -47,6 +46,7 @@ public class TranslatorActivity extends AppCompatActivity {
     private static final int RC_HANDLE_GMS = 9001;
     private static final int RC_HANDLE_CAMERA_PERM = 2;
 
+
     //==============================================================================================
     // Translator Activity
     //==============================================================================================
@@ -61,9 +61,12 @@ public class TranslatorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_translator);
         mPreview = (CameraPreview) findViewById(R.id.preview);
+        setPreviewSize(mPreview);
         mGraphicOverlay = (GraphicOverlay) findViewById(R.id.faceOverlay);
         CardView previewCard = (CardView) findViewById(R.id.preview_card_view);
         CardView emojiCard = (CardView) findViewById(R.id.emoji_card_view);
+
+
         ImageButton copyButton = (ImageButton) findViewById(R.id.copy_button);
         final ImageButton pauseButton = (ImageButton) findViewById(R.id.pause_button);
         previewCard.setCardElevation(20f);
@@ -113,20 +116,13 @@ public class TranslatorActivity extends AppCompatActivity {
         }
     }
 
-    //Increases the touch area of the buttons
-    public static void expandTouchArea(final View bigView, final View smallView, final int extraPadding) {
-        bigView.post(new Runnable() {
-            @Override
-            public void run() {
-                Rect rect = new Rect();
-                smallView.getHitRect(rect);
-                rect.top -= extraPadding;
-                rect.left -= extraPadding;
-                rect.right += extraPadding;
-                rect.bottom += extraPadding;
-                bigView.setTouchDelegate(new TouchDelegate(rect, smallView));
-            }
-        });
+    private void setPreviewSize(CameraPreview preview){
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        float logicalDensity = metrics.density;
+        int px = (int) Math.ceil(200 * logicalDensity);
+        preview.setPreviewHeight(px);
+        preview.setPreviewWidth(px);
     }
 
     /**
@@ -189,13 +185,19 @@ public class TranslatorActivity extends AppCompatActivity {
             // isOperational() can be used to check if the required native library is currently
             // available.  The detector will automatically become operational once the library
             // download completes on device.
+            new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+            builder.setTitle("Dialog");
+            builder.setMessage("Lorem ipsum dolor ....");
+            builder.setPositiveButton("OK", null);
+            builder.setNegativeButton("Cancel", null);
+            builder.show();
             Log.w(TAG, "Face detector dependencies are not yet available.");
         }
 
         mCameraSource = new CameraSource.Builder(context, detector)
                 .setRequestedPreviewSize(480, 480)
                 .setFacing(CameraSource.CAMERA_FACING_FRONT)
-                .setRequestedFps(30.0f)
+                .setRequestedFps(60.0f)
                 .build();
     }
 
